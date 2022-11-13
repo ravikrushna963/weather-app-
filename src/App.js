@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{useState} from 'react'
 
-function App() {
+const App = () => {
+  
+  const [city,setCity] = useState("");
+  const [result,setResult] = useState("");
+  const changeHandler = e =>{
+    setCity(e.target.value);
+  }
+  const submitHandler = e =>{
+    e.preventDefault();
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d885aa1d783fd13a55050afeef620fcb`).then(
+      response=> response.json()).then(
+        data => {
+          const kelvin = data.main.temp;
+          const celcius = kelvin - 273.15;
+          setResult("Temperature at "+city+"\n"+Math.round(celcius)+"°C");
+        }
+      ).catch(error => console.log(error))
+      setCity("");
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <center>
+        <div className="">
+          <div className="">
+            <h2 className="pt-4 pb-1">Weather App</h2>
+            <form onSubmit={submitHandler}>
+              <input size="30" type="text" name="city" onChange={changeHandler} value={city} placeholder='Enter your city name'/> <br /><br />
+              <input className='btn btn-primary' type="submit" value="Get Temperature" />
+            </form><br /> <br />
+            <div>
+               <h3>{result}</h3> 
+            </div>
+          </div>
+        </div>
+      </center>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
